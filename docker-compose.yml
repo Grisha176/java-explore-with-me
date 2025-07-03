@@ -1,9 +1,9 @@
 services:
-  stat-server:
+  stats-server:
     build:
-      context: ./statistics-service/stat-server
+      context: ./stat-svc/stat-server
     image: stat-server
-    container_name: stat-server
+    container_name: stats-server
     ports:
       - "9090:9090"
     depends_on:
