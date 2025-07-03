@@ -3,7 +3,6 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.EndpointHitDto;
@@ -33,7 +32,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     public EndpointHitDto create(@RequestBody EndpointHitDto endpointHitDto) {
-        log.info("POST запрос на создание нового EndpointHit {}",endpointHitDto);
+        log.info("POST запрос на создание нового EndpointHit {}", endpointHitDto);
         return statsService.addRequest(endpointHitDto);
     }
 
