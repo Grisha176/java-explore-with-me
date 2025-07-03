@@ -10,7 +10,7 @@
         <relativePath>../../../java-explore-with-me/pom.xml</relativePath>
     </parent>
 
-    <artifactId>stat-service</artifactId>
+    <artifactId>stat-server</artifactId>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>

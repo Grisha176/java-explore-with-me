@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>statistics-service</artifactId>
+    <artifactId>stat-svc</artifactId>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>

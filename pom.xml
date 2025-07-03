@@ -12,10 +12,10 @@
 
 	<name>Explore With Me</name>
 	<modules>
-		<module>statistics-service</module>
-		<module>statistics-service/stat-client</module>
-        <module>statistics-service/stat-dto</module>
-		<module>statistics-service/stat-server</module>
+		<module>stat-svc</module>
+		<module>stat-svc/stat-client</module>
+        <module>stat-svc/stat-dto</module>
+		<module>stat-svc/stat-server</module>
 		<module>ewm-main-service</module>
 	</modules>
 
