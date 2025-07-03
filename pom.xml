@@ -11,11 +11,19 @@
 	</parent>
 
 	<name>Explore With Me</name>
+	<modules>
+		<module>statistics-service</module>
+		<module>statistics-service/stat-client</module>
+        <module>statistics-service/stat-dto</module>
+		<module>statistics-service/stat-server</module>
+		<module>ewm-main-service</module>
+	</modules>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
 
 	<properties>
 		<java.version>21</java.version>
