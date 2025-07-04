@@ -21,7 +21,8 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Long> {
     @Query("SELECT new ru.practicum.model.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start AND :end AND h.uri IN (:uris) " +
-            "GROUP BY h.app, h.uri")
+            "GROUP BY h.app, h.uri " +
+             "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<ViewStats> findStatsUniqueIp(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
@@ -31,7 +32,8 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Long> {
     @Query("SELECT new ru.practicum.model.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
-            "GROUP BY h.app, h.uri")
+            "GROUP BY h.app, h.uri "+
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<ViewStats> findStatsUniqueIpAllUris(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
@@ -41,7 +43,8 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Long> {
     @Query("SELECT new ru.practicum.model.ViewStats(h.app, h.uri, COUNT(h)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start AND :end AND h.uri IN (:uris) " +
-            "GROUP BY h.app, h.uri")
+            "GROUP BY h.app, h.uri "+
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<ViewStats> findStats(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
@@ -51,7 +54,8 @@ public interface StatsRepository extends JpaRepository<EndpointHit,Long> {
     @Query("SELECT new ru.practicum.model.ViewStats(h.app, h.uri, COUNT(h)) " +
             "FROM EndpointHit h " +
             "WHERE h.timestamp BETWEEN :start AND :end " +
-            "GROUP BY h.app, h.uri")
+            "GROUP BY h.app, h.uri "+
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
     List<ViewStats> findStatsAllUris(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
