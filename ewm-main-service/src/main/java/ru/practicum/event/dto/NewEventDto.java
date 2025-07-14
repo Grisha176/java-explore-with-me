@@ -2,12 +2,14 @@ package ru.practicum.event.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.location.LocationDto;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewEventDto {
 
     @NotNull(message = "описание не может быть пустым")

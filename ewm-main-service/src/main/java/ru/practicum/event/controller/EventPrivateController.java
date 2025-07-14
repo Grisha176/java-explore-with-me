@@ -20,7 +20,7 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 import java.util.Collection;
 
 
-@RestController
+@RestController("/pr/events")
 @Slf4j
 @RequiredArgsConstructor
 public class EventPrivateController {

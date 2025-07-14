@@ -10,7 +10,7 @@ import ru.practicum.compilation.dto.NewCompilationRequestDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
 import ru.practicum.compilation.service.CompilationService;
 
-@RestController
+@RestController("/admin/compilations")
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationAdminController {

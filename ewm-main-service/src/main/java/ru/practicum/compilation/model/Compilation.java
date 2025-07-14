@@ -2,8 +2,7 @@ package ru.practicum.compilation.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.event.model.Event;
 
 import java.util.List;
@@ -12,6 +11,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Compilation {
 
     @Id

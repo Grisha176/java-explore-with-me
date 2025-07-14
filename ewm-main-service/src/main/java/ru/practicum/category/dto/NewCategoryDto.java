@@ -2,11 +2,13 @@ package ru.practicum.category.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewCategoryDto {
 
     @NotNull(message = "Название не может быть пустым")

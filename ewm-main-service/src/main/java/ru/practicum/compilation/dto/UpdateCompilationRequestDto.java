@@ -1,13 +1,15 @@
 package ru.practicum.compilation.dto;
 
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateCompilationRequestDto {
 
     private List<Long> events;

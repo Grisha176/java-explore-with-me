@@ -1,14 +1,16 @@
 package ru.practicum.event.dto;
 
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.event.enums.EventStateActionUserRequest;
 import ru.practicum.location.Location;
 
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateEventUserRequest {
 
 

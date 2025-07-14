@@ -1,13 +1,15 @@
 package ru.practicum.location;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "location")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Location {
 
     @Id
