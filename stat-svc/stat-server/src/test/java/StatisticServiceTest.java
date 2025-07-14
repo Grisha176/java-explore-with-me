@@ -5,11 +5,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.EndpointHitDto;
-import ru.practicum.dao.StatsRepository;
-import ru.practicum.mapper.StatsMapper;
-import ru.practicum.model.EndpointHit;
-import ru.practicum.model.ViewStats;
-import ru.practicum.service.StatsServiceImpl;
+import ru.practicum.stat.dao.StatsRepository;
+import ru.practicum.stat.mapper.StatsMapper;
+import ru.practicum.stat.model.EndpointHit;
+import ru.practicum.stat.model.ViewStats;
+import ru.practicum.stat.service.StatsServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
