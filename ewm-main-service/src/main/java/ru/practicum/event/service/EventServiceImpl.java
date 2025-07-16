@@ -26,7 +26,6 @@ import ru.practicum.exception.ValidateDataException;
 import ru.practicum.location.Location;
 import ru.practicum.location.dao.LocationRepository;
 import ru.practicum.mappers.*;
-//import ru.practicum.stat.model.ViewStats;
 import ru.practicum.request.dao.EventRequestRepository;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
@@ -71,13 +70,14 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(newEventDto.getCategory().intValue())
                 .orElseThrow(() -> new NotFoundException("Категория с ID " + newEventDto.getCategory() + " не найдена"));
         Event event = eventMapper.mapToEvent(newEventDto);
-        if(event.getEventDate().isAfter(LocalDateTime.now().minusHours(2))){
+      /*  if(event.getEventDate().isAfter(LocalDateTime.now().minusHours(2))){
             throw new ValidateDataException("Время начала события должно быть хотя бы на 2 часа позже");
-        }
+        }*/
 
         Location location = locationMapper.mapToLocation(newEventDto.getLocation());
         location = locationRepository.save(location);
 
+        event.setState(EventState.PENDING);
         event.setLocation(location);
         event.setInitiator(user);
         event.setCreatedOn(LocalDateTime.now());
@@ -135,7 +135,7 @@ public class EventServiceImpl implements EventService {
         log.info("Попытка обновить событие: {},{}",eventId,updateEventUserRequest);
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id:"+userId+" не найден"));
         Event event = eventRepository.findByIdAndInitiatorId(eventId,userId).orElseThrow(() -> new NotFoundException("Событие с id:"+eventId+" не найдено"));
-        if(event.getState().equals(EventState.PUBLISHED)){
+       if(event.getState().equals(EventState.PUBLISHED)){
             throw new ValidateDataException("Опубликованные события нельзя изменить");
         }
         event = updateEventFromDto(updateEventUserRequest, event);

@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import ru.practicum.event.enums.EventStateActionUserRequest;
@@ -28,6 +29,7 @@ public class UpdateEventUserRequest {
 
     private Boolean paid;
 
+    @Min(value = 0,message = "Количество участников не может быть отрицательным числом")
     private Integer participantLimit;
 
     private Boolean requestModeration;

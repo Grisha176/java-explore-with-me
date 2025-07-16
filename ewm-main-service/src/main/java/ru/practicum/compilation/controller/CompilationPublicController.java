@@ -11,7 +11,7 @@ import ru.practicum.compilation.service.CompilationService;
 
 import java.util.List;
 
-@RestController("/compilations")
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationPublicController {
@@ -19,7 +19,7 @@ public class CompilationPublicController {
     private final CompilationService compilationService;
 
 
-    @GetMapping
+    @GetMapping("/compilations")
     public List<CompilationDto> getAllCompilations(
             @RequestParam(required = false) Boolean pinned,
             @RequestParam(defaultValue = "0") Integer from,
@@ -28,7 +28,7 @@ public class CompilationPublicController {
         return compilationService.getAllCompilationPublic(pinned, from, size);
     }
 
-    @GetMapping("/{compId}")
+    @GetMapping("/compilations/{compId}")
     public CompilationDto findCompilationById(@PathVariable Long compId) {
         log.info("Запрос на получение подборки событий по id = {}", compId);
         return compilationService.getById(compId);

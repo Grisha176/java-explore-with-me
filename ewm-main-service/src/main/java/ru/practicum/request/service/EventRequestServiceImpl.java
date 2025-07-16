@@ -32,6 +32,9 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
+        if(eventId == null){
+            throw new ConflictException("Event id is null");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c ID " + userId + " не найден"));
         Event event = eventRepository.findById(eventId)

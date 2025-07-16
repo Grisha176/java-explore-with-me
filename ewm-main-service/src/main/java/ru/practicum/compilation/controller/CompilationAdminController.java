@@ -10,7 +10,7 @@ import ru.practicum.compilation.dto.NewCompilationRequestDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
 import ru.practicum.compilation.service.CompilationService;
 
-@RestController("/admin/compilations")
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class CompilationAdminController {
@@ -24,7 +24,7 @@ public class CompilationAdminController {
         return compilationService.create(newCompilationRequestDto);
     }
 
-    @PatchMapping("/{compId}")
+    @PatchMapping("/admin/compilations/{compId}")
     public CompilationDto update(@Valid @RequestBody UpdateCompilationRequestDto updateCompilation,
                                  @PathVariable Long compId) {
         log.info("Запрос на обновление подборки событий -ADMIN");
@@ -32,7 +32,7 @@ public class CompilationAdminController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/compilations/{id}")
     public void delete(@PathVariable Long id) {
         log.info("Запрос на удаление подборки событий - ADMIN");
         compilationService.deleteComp(id);

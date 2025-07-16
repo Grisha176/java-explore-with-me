@@ -5,6 +5,7 @@ import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.location.Location;
+import ru.practicum.location.LocationDto;
 import ru.practicum.user.dto.UserShortDto;
 
 @Getter
@@ -35,7 +36,7 @@ public class EventFullDto {
     private UserShortDto initiator;
 
     @NotNull(message = "локация не может быть пустой")
-    private Location location;
+    private LocationDto    location;
 
     @NotNull(message = "статус не может быть пустым")
     private Boolean paid;

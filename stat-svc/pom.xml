@@ -9,9 +9,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <packaging>pom</packaging>
-
     <artifactId>stat-svc</artifactId>
+    <packaging>pom</packaging>
 
     <modules>
         <module>stat-client</module>
@@ -19,11 +18,17 @@
         <module>stat-server</module>
     </modules>
 
-
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
