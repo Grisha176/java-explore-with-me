@@ -4,7 +4,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.EndpointHitDto;
+import ru.dto.EndpointHitDto;
 import ru.practicum.stat.dao.StatsRepository;
 import ru.practicum.stat.mapper.StatsMapper;
 import ru.practicum.stat.model.EndpointHit;

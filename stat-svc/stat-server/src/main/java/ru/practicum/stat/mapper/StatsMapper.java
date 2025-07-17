@@ -3,7 +3,7 @@ package ru.practicum.stat.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import ru.practicum.EndpointHitDto;
+import ru.dto.EndpointHitDto;
 import ru.practicum.stat.model.EndpointHit;
 import ru.practicum.stat.model.ViewStats;
 

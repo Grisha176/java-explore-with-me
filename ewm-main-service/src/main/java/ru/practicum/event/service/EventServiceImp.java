@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatisticsClient;
+import ru.client.StatisticsClient;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventServiceImpl implements EventService {
+public class EventServiceImp implements EventService {
 
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

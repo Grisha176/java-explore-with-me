@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.client;
 
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.base.BaseClient;
+import ru.client.base.BaseClient;
+import ru.dto.EndpointHitDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

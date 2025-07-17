@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.dto;
 
 
 import lombok.*;

@@ -1,4 +1,4 @@
-package ru.practicum.base;
+package ru.client.base;
 
 import jakarta.annotation.Nullable;
 import org.springframework.http.*;
