@@ -1,4 +1,4 @@
-package ru.client.base;
+package ru.practicum.client.base;
 
 import jakarta.annotation.Nullable;
 import org.springframework.http.*;
@@ -8,6 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
+
 
 public class BaseClient {
     protected final RestTemplate rest;

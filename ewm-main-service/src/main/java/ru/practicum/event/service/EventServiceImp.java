@@ -11,12 +11,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.client.StatisticsClient;
+import ru.practicum.event.dto.*;
+import ru.practicum.mappers.*;
+import ru.practicum.client.StatisticsClient;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.category.dao.CategoryRepository;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.dao.EventRepository;
-import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.enums.SortType;
@@ -25,14 +27,12 @@ import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ValidateDataException;
 import ru.practicum.location.Location;
 import ru.practicum.location.dao.LocationRepository;
-import ru.practicum.mappers.*;
 import ru.practicum.request.dao.EventRequestRepository;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.request.model.EventRequest;
-import ru.practicum.stat.model.ViewStats;
 import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
 import ru.practicum.exception.NotFoundException;
@@ -64,7 +64,7 @@ public class EventServiceImp implements EventService {
     private final EventRequestMapper eventRequestMapper;
 
     @Override
-    public EventFullDto createEvent(Long userId,NewEventDto newEventDto) {
+    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         log.info("Попытка создать событие пользователем {},{}", userId, newEventDto);
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id:"+userId+" не найден"));
         Category category = categoryRepository.findById(newEventDto.getCategory().intValue())
@@ -360,11 +360,11 @@ public class EventServiceImp implements EventService {
 
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            List<ViewStats> viewStatsList = Arrays.asList(new ObjectMapper().convertValue(response.getBody(), ViewStats[].class));
+            List<ViewStatsDto> viewStatsList = Arrays.asList(new ObjectMapper().convertValue(response.getBody(), ViewStatsDto[].class));
             return viewStatsList.stream()
                     .collect(Collectors.toMap(
                             viewStats -> Long.parseLong(viewStats.getUri().substring("/events/".length())),
-                            ViewStats::getHits
+                            ViewStatsDto::getHits
                     ));
         } else {
             log.warn("Не удалось получить статистику просмотров. Код ответа: {}", response.getStatusCodeValue());

@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationRequestDto;
-import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dto.EventShortDto;
 

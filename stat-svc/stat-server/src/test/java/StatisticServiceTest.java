@@ -4,7 +4,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.dto.EndpointHitDto;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.stat.dao.StatsRepository;
 import ru.practicum.stat.mapper.StatsMapper;
 import ru.practicum.stat.model.EndpointHit;
@@ -88,11 +89,11 @@ public class StatisticServiceTest {
                 .thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(NOW, NOW.plusHours(1), uris, true);
+        List<ViewStatsDto> result = statsService.getStats(NOW, NOW.plusHours(1), uris, true);
 
         // Then
         assertEquals(2,result.size());
-        assertThat(result).containsExactlyElementsOf(expectedStats);
+        assertThat(result).containsExactlyElementsOf(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList());
         verify(statsRepository, times(1)).findStatsUniqueIp(NOW, NOW.plusHours(1), uris);
         verify(statsRepository, never()).findStatsUniqueIpAllUris(any(), any());
     }
@@ -106,11 +107,11 @@ public class StatisticServiceTest {
                 .thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(NOW, NOW.plusDays(1), null, true);
+        List<ViewStatsDto> result = statsService.getStats(NOW, NOW.plusDays(1), null, true);
 
         // Then
         assertThat(result).hasSize(1);
-        assertThat(result).containsExactlyElementsOf(expectedStats);
+        assertThat(result).containsExactlyElementsOf(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList());
         verify(statsRepository, times(1)).findStatsUniqueIpAllUris(NOW, NOW.plusDays(1));
         verify(statsRepository, never()).findStatsUniqueIp(any(), any(), any());
     }
@@ -125,11 +126,11 @@ public class StatisticServiceTest {
                 .thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(NOW, NOW.plusMinutes(30), uris, false);
+        List<ViewStatsDto> result = statsService.getStats(NOW, NOW.plusMinutes(30), uris, false);
 
         // Then
         assertThat(result).hasSize(1);
-        assertThat(result).containsExactlyElementsOf(expectedStats);
+        assertThat(result).containsExactlyElementsOf(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList());
         verify(statsRepository, times(1)).findStats(NOW, NOW.plusMinutes(30), uris);
     }
 
@@ -142,11 +143,11 @@ public class StatisticServiceTest {
                 .thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(NOW, NOW.plusHours(2), null, false);
+        List<ViewStatsDto> result = statsService.getStats(NOW, NOW.plusHours(2), null, false);
 
         // Then
         assertThat(result).hasSize(1);
-        assertThat(result).containsExactlyElementsOf(expectedStats);
+        assertThat(result).containsExactlyElementsOf(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList());
         verify(statsRepository, times(1)).findStatsAllUris(NOW, NOW.plusHours(2));
     }
 
@@ -187,12 +188,12 @@ public class StatisticServiceTest {
         when(statsRepository.findStatsUniqueIp(start, end, uris)).thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(start, end, uris, unique);
+        List<ViewStatsDto> result = statsService.getStats(start, end, uris, unique);
 
         // Then
         assertNotNull(result);
         assertEquals(expectedStats.size(), result.size());
-        assertEquals(expectedStats, result);
+        assertEquals(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList(), result);
         verify(statsRepository, times(1)).findStatsUniqueIp(start, end, uris);
     }
 
@@ -211,12 +212,12 @@ public class StatisticServiceTest {
         when(statsRepository.findStatsUniqueIpAllUris(start, end)).thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(start, end, uris, unique);
+        List<ViewStatsDto> result = statsService.getStats(start, end, uris, unique);
 
         // Then
         assertNotNull(result);
         assertEquals(expectedStats.size(), result.size());
-        assertEquals(expectedStats, result);
+        assertEquals(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList(), result);
         verify(statsRepository, times(1)).findStatsUniqueIpAllUris(start, end);
     }
 
@@ -235,12 +236,12 @@ public class StatisticServiceTest {
         when(statsRepository.findStats(start, end, uris)).thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(start, end, uris, unique);
+        List<ViewStatsDto> result = statsService.getStats(start, end, uris, unique);
 
         // Then
         assertNotNull(result);
         assertEquals(expectedStats.size(), result.size());
-        assertEquals(expectedStats, result);
+        assertEquals(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList(), result);
         verify(statsRepository, times(1)).findStats(start, end, uris);
     }
 
@@ -259,12 +260,12 @@ public class StatisticServiceTest {
         when(statsRepository.findStatsAllUris(start, end)).thenReturn(expectedStats);
 
         // When
-        List<ViewStats> result = statsService.getStats(start, end, uris, unique);
+        List<ViewStatsDto> result = statsService.getStats(start, end, uris, unique);
 
         // Then
         assertNotNull(result);
         assertEquals(expectedStats.size(), result.size());
-        assertEquals(expectedStats, result);
+        assertEquals(expectedStats.stream().map(statsMapper::mapToViewStatsDto).toList(), result);
         verify(statsRepository, times(1)).findStatsAllUris(start, end);
     }
 }

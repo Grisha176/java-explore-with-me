@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.enums.EventState;
-import ru.practicum.location.Location;
 import ru.practicum.location.LocationDto;
 import ru.practicum.user.dto.UserShortDto;
 

@@ -3,7 +3,8 @@ package ru.practicum.stat.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import ru.dto.EndpointHitDto;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.stat.model.EndpointHit;
 import ru.practicum.stat.model.ViewStats;
 
@@ -13,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Mapper(componentModel = "spring")
 public interface StatsMapper {
 
-    ViewStats mapToViewStats(EndpointHit endpointHit);
+    ViewStatsDto mapToViewStatsDto(ViewStats viewStats);
 
 
     @Mapping(target = "timestamp", source = "timestamp", qualifiedByName = "stringToLocalDateTime")

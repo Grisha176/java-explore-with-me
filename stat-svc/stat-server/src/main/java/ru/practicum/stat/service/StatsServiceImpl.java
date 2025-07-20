@@ -3,7 +3,8 @@ package ru.practicum.stat.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.dto.EndpointHitDto;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.stat.dao.StatsRepository;
 import ru.practicum.stat.mapper.StatsMapper;
 import ru.practicum.stat.model.EndpointHit;
@@ -30,7 +31,7 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         log.info("Получение статистики с start={}, end={}, uris={}, unique={}", start, end, uris, unique);
 
         List<ViewStats> viewStats;
@@ -47,7 +48,7 @@ public class StatsServiceImpl implements StatsService {
                 viewStats = statsRepository.findStatsAllUris(start, end);
             }
         }
-        return viewStats;
+        return viewStats.stream().map(statsMapper::mapToViewStatsDto).toList();
     }
 
 
