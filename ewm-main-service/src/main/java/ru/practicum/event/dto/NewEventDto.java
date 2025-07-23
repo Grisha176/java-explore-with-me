@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import ru.practicum.location.LocationDto;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -30,7 +32,7 @@ public class NewEventDto {
 
     @NotNull(message = "Дата события не может быть пустой")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
 
 
     @NotNull(message = "локация не может быть пустой")

@@ -497,10 +497,10 @@ public class EventServiceImp implements EventService {
         if (dto.getAnnotation() != null) event.setAnnotation(dto.getAnnotation());
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
         if (dto.getEventDate() != null) {
-            if(LocalDateTime.parse(dto.getEventDate(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).isBefore(LocalDateTime.now())){
+            if(dto.getEventDate().isBefore(LocalDateTime.now())){
                 throw new ValidateDataException("Событие не может быть в прошлом");
             }
-            event.setEventDate(LocalDateTime.parse(dto.getEventDate(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            event.setEventDate(dto.getEventDate());
         }
         if (dto.getLocation() != null) event.setLocation(dto.getLocation());
         if (dto.getPaid() != null) event.setPaid(dto.getPaid());

@@ -8,6 +8,8 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.location.LocationDto;
 import ru.practicum.user.dto.UserShortDto;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -27,7 +29,7 @@ public class EventFullDto {
 
     @NotNull(message = "Дата события не может быть пустой")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
 
     @NotNull(message = "локация не может быть пустой")
     private LocationDto location;
@@ -39,9 +41,9 @@ public class EventFullDto {
     private Boolean requestModeration;
     private EventState state;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String createdOn;
+    private LocalDateTime createdOn;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String publishedOn;
+    private LocalDateTime publishedOn;
 
     @NotNull(message = "Создатель события не может быть null")
     private UserShortDto initiator;

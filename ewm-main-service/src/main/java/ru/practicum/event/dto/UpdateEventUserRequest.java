@@ -7,6 +7,8 @@ import lombok.*;
 import ru.practicum.event.enums.EventStateActionUserRequest;
 import ru.practicum.location.Location;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -25,7 +27,7 @@ public class UpdateEventUserRequest {
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
 
     private Location location;
 

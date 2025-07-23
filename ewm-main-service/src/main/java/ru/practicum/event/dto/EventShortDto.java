@@ -6,6 +6,8 @@ import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.user.dto.UserShortDto;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -23,7 +25,7 @@ public class EventShortDto {
 
     @NotNull(message = "Дата события не может быть пустой")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
 
     private Long id;
 
