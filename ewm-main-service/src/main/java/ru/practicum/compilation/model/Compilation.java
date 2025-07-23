@@ -7,7 +7,7 @@ import ru.practicum.event.model.Event;
 
 import java.util.List;
 
-@Table(name = "compilation")
+@Table(name = "compilations")
 @Entity
 @Getter
 @Setter

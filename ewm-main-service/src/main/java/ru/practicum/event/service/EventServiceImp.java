@@ -2,13 +2,16 @@ package ru.practicum.event.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -340,35 +343,68 @@ public class EventServiceImp implements EventService {
     @Override
     public List<EventShortDto> getAllEventPublicRequest(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sortType, int from, int size,HttpServletRequest httpServletRequest) {
 
-        LocalDateTime start = rangeStart == null ? LocalDateTime.now() : rangeStart;
-        LocalDateTime end = rangeEnd == null ? LocalDateTime.now().plusYears(1) : rangeEnd;
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new IllegalArgumentException("Время начала должно быть раньше конца");
+        }
 
-        List<Event> events = new ArrayList<>();
+
+        Pageable pageable = PageRequest.of(from, size);
+        Specification<Event> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("state"), EventState.PUBLISHED));
+
+
+            if (text != null) {
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), "%" + text.toLowerCase() + "%"),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" +text.toLowerCase() + "%")
+                ));
+            }
+
+            if (categories != null && categories.isEmpty()) {
+                predicates.add(root.get("category").get("id").in(categories));
+            }
+
+            if (paid != null) {
+                predicates.add(criteriaBuilder.equal(root.get("paid"), paid));
+            }
+
+            if (rangeStart == null && rangeEnd == null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), LocalDateTime.now()));
+            } else {
+                predicates.add(criteriaBuilder.between(root.get("eventDate"), rangeStart, rangeEnd));
+            }
+
+            if ((onlyAvailable)) {
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("participantLimit"), 0),
+                        criteriaBuilder.greaterThan(root.get("participantLimit"), root.get("confirmedRequests"))
+                ));
+            }
+
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+
+        Page<Event> eventPage = eventRepository.findAll(spec, pageable);
 
         statClient.create(httpServletRequest);
 
-        switch (sortType){
-            case EVENT_DATE:
-                Pageable pageable = PageRequest.of(from, size, Sort.by("eventDate"));
-                events = eventRepository.findAllPublicRequest(text,categories,paid,start,end,onlyAvailable,EventState.PUBLISHED,pageable);
-                break;
-            case VIEWS:
-                Pageable pageableV = PageRequest.of(from, size, Sort.by("views"));
-                events = eventRepository.findAllPublicRequest(text,categories,paid,start,end,onlyAvailable,EventState.PUBLISHED,pageableV);
-        }
-
-        Map<Long, Long> views = getViewsAllEvents(events);
-
-        List<EventShortDto> eventShortDtos = events.stream()
+        List<EventShortDto> eventShortDtos = eventPage.getContent().stream()
                 .map(event -> {
-                    Long eventId = event.getId();
-                    Long viewCount = views.getOrDefault(eventId, 0L); // Получаем просмотры или 0, если нет данных
-                    EventShortDto eventShortDto = eventMapper.toEventShortDto(event);
-                    eventShortDto.setViews(Math.toIntExact(viewCount));
-                    return eventShortDto;
+                    EventShortDto eventDto = eventMapper.toEventShortDto(event);
+                    eventDto.setViews(getViews(event.getId(), event.getCreatedOn()));
+                    eventDto.setConfirmedRequests(eventDto.getConfirmedRequests());
+                    return eventDto;
                 })
-                .toList();
+                .collect(Collectors.toList());
 
+        if (sortType.equals(SortType.EVENT_DATE)) {
+            eventShortDtos.sort(Comparator.comparing(EventShortDto::getEventDate));
+        } else if (sortType.equals(SortType.VIEWS)) {
+            eventShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
+        }
 
         return eventShortDtos;
     }

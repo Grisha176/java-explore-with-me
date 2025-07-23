@@ -40,6 +40,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: pas
       SPRING_PROFILES_ACTIVE: postgres
       STATS_SERVER_URL: http://stats-server:9090
+      SPRING_SQL_INIT_MODE: always
+      SPRING_SQL_INIT_SCHEMA-LOCATIONS: classpath:schema.sql
+      SPRING_JPA_HIBERNATE_DDL-AUTO: none
     ports:
       - "8080:8080"
     depends_on:

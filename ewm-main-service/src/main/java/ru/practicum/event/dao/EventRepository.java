@@ -1,6 +1,8 @@
 package ru.practicum.event.dao;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,7 +53,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) " +
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (:paid IS NULL OR e.paid = :paid) " +
-            "AND (:start IS NULL OR :end IS NULL OR e.eventDate BETWEEN :start AND :end) " +
+            "AND (:start IS NULL OR :end IS NULL OR (e.eventDate >= :start AND e.eventDate <= :end)) " +
             "AND (:onlyAvailable IS NULL OR :onlyAvailable = false OR (e.participantLimit = 0 OR e.confirmedRequests < e.participantLimit)) " +
             "AND (:state IS NULL OR e.state = :state)")
     List<Event> findAllPublicRequest(@Param("text") String text,
@@ -62,6 +64,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                      @Param("onlyAvailable") Boolean onlyAvailable,
                                      @Param("state") EventState state,
                                      Pageable pageable);
+
+    Page<Event> findAll(Specification<Event> spec, Pageable pageable);
     List<Event> findAllByIdIn(List<Long> ids);
 
 }

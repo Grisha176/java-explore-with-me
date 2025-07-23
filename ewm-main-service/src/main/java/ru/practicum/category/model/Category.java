@@ -3,7 +3,7 @@ package ru.practicum.category.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "category")
+@Table(name = "categories")
 @Entity
 @Getter
 @Setter
@@ -19,6 +19,4 @@ public class Category {
     @Column(nullable = false,unique = true)
     private String name;
 
-    @Column
-    private String description;
 }
