@@ -39,9 +39,9 @@ public class EventPublicController {
         log.info("Публичный запрос на получении событий {}, categories={}, paid={}, rangeStart={}, rangeEnd={}, onlyAvailable={}, sort={}, from={}, size={}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         SortType sortType;
-        if(sort == null) {
+        if (sort == null) {
             sortType = SortType.EVENT_DATE;
-        } else{
+        } else {
             sortType = SortType.valueOf(sort);
         }
         return eventService.getAllEventPublicRequest(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sortType, from, size, request);

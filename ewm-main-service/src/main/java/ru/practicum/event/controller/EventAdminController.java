@@ -10,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
-import ru.practicum.event.enums.EventState;
 import ru.practicum.event.service.EventService;
 
 import java.time.LocalDateTime;
@@ -31,13 +30,13 @@ public class EventAdminController {
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-            @RequestParam(required = false, defaultValue = "0")@PositiveOrZero Integer from,
-            @RequestParam(required = false, defaultValue = "10")@Positive Integer size,
+            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(required = false, defaultValue = "10") @Positive Integer size,
             HttpServletRequest request
     ) {
         log.info("Пришел GET запрос /admin/events с параметрами: users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
                 users, states, categories, rangeStart, rangeEnd, from, size);
-        return eventService.getAllEventsAdmin(users, states, categories, rangeStart, rangeEnd, from, size,request);
+        return eventService.getAllEventsAdmin(users, states, categories, rangeStart, rangeEnd, from, size, request);
     }
 
     @PatchMapping("/admin/events/{eventId}")

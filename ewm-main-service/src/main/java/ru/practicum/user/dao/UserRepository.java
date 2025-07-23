@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.id IN :ids")
+    @Query("SELECT u FROM User u WHERE :ids IS NULL OR u.id IN :ids")
     List<User> findAll(@Param("ids") List<Long> ids, Pageable pageable);
 }

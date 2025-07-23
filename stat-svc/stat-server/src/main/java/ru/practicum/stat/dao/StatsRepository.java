@@ -17,47 +17,33 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
                                  @Param("uris") List<String> uris);
 
 
-    @Query("SELECT new ru.practicum.stat.model.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
-            "FROM EndpointHit h " +
-            "WHERE h.timestamp BETWEEN :start AND :end AND h.uri IN (:uris) " +
-            "GROUP BY h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip) DESC")
-    List<ViewStats> findStatsUniqueIp(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
-            @Param("uris") List<String> uris
-    );
+    @Query("SELECT new ru.practicum.stat.model.ViewStats(e.app, e.uri, COUNT(DISTINCT e.ip)) " +
+            "FROM EndpointHit e " +
+            "WHERE e.timestamp BETWEEN ?1 AND ?2 " +
+            "AND e.uri IN (?3) " +
+            "GROUP BY e.app, e.uri " +
+            "ORDER BY COUNT(DISTINCT e.ip) DESC")
+    List<ViewStats> findStatsUniqueIp(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.stat.model.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
-            "FROM EndpointHit h " +
-            "WHERE h.timestamp BETWEEN :start AND :end " +
-            "GROUP BY h.app, h.uri " +
-            "ORDER BY COUNT(DISTINCT h.ip) DESC")
-    List<ViewStats> findStatsUniqueIpAllUris(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
-    );
+    @Query("SELECT new ru.practicum.stat.model.ViewStats(e.app, e.uri, COUNT(DISTINCT e.ip)) " +
+            "FROM EndpointHit e " +
+            "WHERE e.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY e.app, e.uri " +
+            "ORDER BY COUNT(DISTINCT e.ip) DESC")
+    List<ViewStats> findStatsUniqueIpAllUris(LocalDateTime start, LocalDateTime end);
 
-    // Обычные просмотры
-    @Query("SELECT new ru.practicum.stat.model.ViewStats(h.app, h.uri, COUNT(h)) " +
-            "FROM EndpointHit h " +
-            "WHERE h.timestamp BETWEEN :start AND :end AND h.uri IN (:uris) " +
-            "GROUP BY h.app, h.uri " +
-            "ORDER BY COUNT(h.ip) DESC")
-    List<ViewStats> findStats(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
-            @Param("uris") List<String> uris
-    );
+    @Query("SELECT new ru.practicum.stat.model.ViewStats(e.app, e.uri, COUNT(e.ip)) " +
+            "FROM EndpointHit e " +
+            "WHERE e.timestamp BETWEEN ?1 AND ?2 " +
+            "AND e.uri IN (?3) " +
+            "GROUP BY e.app, e.uri " +
+            "ORDER BY COUNT(e.ip) DESC")
+    List<ViewStats> findStats(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.stat.model.ViewStats(h.app, h.uri, COUNT(h)) " +
-            "FROM EndpointHit h " +
-            "WHERE h.timestamp BETWEEN :start AND :end " +
-            "GROUP BY h.app, h.uri " +
-            "ORDER BY COUNT(h.ip) DESC")
-    List<ViewStats> findStatsAllUris(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
-    );
-
+    @Query("SELECT new ru.practicum.stat.model.ViewStats(e.app, e.uri, COUNT(e.ip)) " +
+            "FROM EndpointHit e " +
+            "WHERE e.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY e.app, e.uri " +
+            "ORDER BY COUNT(e.ip) DESC")
+    List<ViewStats> findStatsAllUris(LocalDateTime start, LocalDateTime end);
 }

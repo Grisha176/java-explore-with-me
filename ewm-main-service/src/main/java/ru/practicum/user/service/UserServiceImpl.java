@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(NewUserRequest newUserRequest) {
         log.info("Создание нового пользователя: {}", newUserRequest);
-        if(userRepository.existsByEmail(newUserRequest.getEmail())) {
-            throw new DuplicatedException("Пользовательс с email:"+newUserRequest.getEmail()+" уже существует");
+        if (userRepository.existsByEmail(newUserRequest.getEmail())) {
+            throw new DuplicatedException("Пользовательс с email:" + newUserRequest.getEmail() + " уже существует");
         }
         User user = userMapper.mapToUser(newUserRequest);
         user = userRepository.save(user);
@@ -40,19 +40,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        log.info("Попытка удаление пользователся в id:{}",id);
-        userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь с id:"+id+" не найден"));
+        log.info("Попытка удаление пользователся в id:{}", id);
+        userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь с id:" + id + " не найден"));
         userRepository.deleteById(id);
-        log.info("Успешное удалении пользователя с id:{}",id);
+        log.info("Успешное удалении пользователя с id:{}", id);
     }
 
     @Override
     public List<UserDto> getAllUsers(List<Long> ids, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
-        if(ids == null || ids.isEmpty()) {
-            ids = List.of();
-        }
-        return userRepository.findAll(ids,pageable).stream().map(userMapper::mapToUserDto).toList();
+        return userRepository.findAll(ids, pageable).stream().map(userMapper::mapToUserDto).toList();
     }
 
 

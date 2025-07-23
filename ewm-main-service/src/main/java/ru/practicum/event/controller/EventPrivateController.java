@@ -1,6 +1,6 @@
 package ru.practicum.event.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -44,10 +44,10 @@ public class EventPrivateController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
-    public EventFullDto findEventById(@PathVariable Long eventId, HttpServletRequest request) {
+    public EventFullDto findEventById(@PathVariable Long eventId, @PathVariable Long userId) {
         log.info("Запрос на получение события с id:{}", eventId);
-        final EventFullDto event = eventService.getEventByIdPublic(eventId, request);
-        return event;
+        return eventService.getEventById(eventId, userId);
+
     }
 
     @GetMapping("/users/{userId}/events")

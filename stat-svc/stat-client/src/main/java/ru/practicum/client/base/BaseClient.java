@@ -1,45 +1,50 @@
 package ru.practicum.client.base;
 
-import jakarta.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
-import java.util.Map;
 
-
+@Slf4j
 public class BaseClient {
+
     protected final RestTemplate rest;
+    private final String statsUri;
 
-    public BaseClient(RestTemplate rest) {
+    public BaseClient(RestTemplate rest,@Value("${stats-server.url}") String statsUri) {
         this.rest = rest;
+        this.statsUri = statsUri;
     }
 
-    protected ResponseEntity<Object> get(String path, Map<String, Object> parameters) {
-        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
+    protected ResponseEntity<Object> get(String path) {
+        return makeAndSendRequest(statsUri + path);
     }
 
-    protected ResponseEntity<Object> post(String path, Object body) {
-        return makeAndSendRequest(HttpMethod.POST, path, null, body);
+    protected ResponseEntity<Object> post(Object body) {
+        HttpEntity<Object> requestEntity = new HttpEntity<>(body);
+        try {
+            log.info("Отправка POST запроса на URL: {}, тело: {}", statsUri + "/hit", body);
+            ResponseEntity<Object> response = rest.postForEntity(statsUri + "/hit", requestEntity, Object.class);
+            log.info("Получен ответ от сервиса статистики, статус: {}", response.getStatusCode());
+            return response;
+        } catch (HttpStatusCodeException e) {
+            log.error("Ошибка при отправке POST запроса: {}, тело ответа: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+        }
     }
 
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path,
-                                                          @Nullable Map<String, Object> parameters, @Nullable T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
-
+    private <T> ResponseEntity<Object> makeAndSendRequest(String path) {
+        HttpEntity<T> requestEntity = new HttpEntity<>(null, defaultHeaders());
         ResponseEntity<Object> responseEntity;
         try {
-            if (parameters != null) {
-                UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath(path);
-                parameters.forEach(uriBuilder::queryParam);
-                responseEntity = rest.exchange(uriBuilder.toUriString(), method, requestEntity, Object.class);
-            } else {
-                responseEntity = rest.exchange(path, method, requestEntity, Object.class);
-            }
+            log.info("Отправка GET запроса на URL: {}", path);
+            responseEntity = rest.exchange(path, HttpMethod.GET, requestEntity, Object.class);
+            log.info("Получен ответ от сервиса статистики, статус: {}", responseEntity.getStatusCode());
         } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            log.error("Ошибка при отправке GET запроса: {}, тело ответа: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
         return prepareResponse(responseEntity);
     }
@@ -61,5 +66,4 @@ public class BaseClient {
         }
         return responseBuilder.build();
     }
-
 }

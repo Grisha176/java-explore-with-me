@@ -12,25 +12,25 @@ import java.util.List;
 
 public interface EventService {
 
-     EventFullDto createEvent(Long userId, NewEventDto newEventDto);
+    EventFullDto createEvent(Long userId, NewEventDto newEventDto);
 
-     List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size);
+    List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size);
 
-     List<EventFullDto> getAllEventsAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd,int from,int size,HttpServletRequest request);
+    List<EventFullDto> getAllEventsAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size, HttpServletRequest request);
 
-     List<EventShortDto> getAllEventPublicRequest(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sortType,int from,int size,HttpServletRequest httpServletRequest);
+    List<EventShortDto> getAllEventPublicRequest(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sortType, int from, int size, HttpServletRequest httpServletRequest);
 
-     EventFullDto getEventByIdPublic(Long eventId,HttpServletRequest httpServletRequest);
+    EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest);
 
-     EventFullDto getEventById(Long eventId, Long userId, HttpServletRequest httpServletRequest);
+    EventFullDto getEventById(Long eventId, Long userId);
 
-     EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
+    EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
 
-     EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
+    EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
 
-     List<ParticipationRequestDto> getByEventId(Long eventInitiatorId, Long eventId);
+    List<ParticipationRequestDto> getByEventId(Long eventInitiatorId, Long eventId);
 
-     EventRequestStatusUpdateResult updateStatus(Long eventInitiatorId, Long eventId, EventRequestStatusUpdateRequest updateStatusRequest);
+    EventRequestStatusUpdateResult updateStatus(Long eventInitiatorId, Long eventId, EventRequestStatusUpdateRequest updateStatusRequest);
 
 
 }

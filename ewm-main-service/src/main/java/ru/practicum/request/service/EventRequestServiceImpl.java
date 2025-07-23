@@ -2,7 +2,6 @@ package ru.practicum.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.DataException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dao.EventRepository;
@@ -22,7 +21,7 @@ import ru.practicum.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.DataFormatException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +35,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
- /*       if(eventId == null){
-            throw new ConflictException("Event id is null");
-        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c ID " + userId + " не найден"));
         Event event = eventRepository.findById(eventId)
@@ -50,13 +47,12 @@ public class EventRequestServiceImpl implements EventRequestService {
             throw new DuplicatedException("Нельзя участвовать в неопубликованном событии");
         }
 
-        System.out.println(event.getParticipantLimit());
-        System.out.println(eventRequestRepository.countByEventIdAndStatus(eventId,RequestStatus.CONFIRMED));
         if (event.getParticipantLimit() != 0 &&
                 eventRequestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED) >= event.getParticipantLimit() && event.getRequestModeration()) {
             throw new DuplicatedException("Достигнут лимит участников.");
         }
-        System.out.println(eventRequestRepository.countByEventId(eventId));;
+        System.out.println(eventRequestRepository.countByEventId(eventId));
+        ;
 
         RequestStatus status = (!event.getRequestModeration() || event.getParticipantLimit() == 0)
                 ? RequestStatus.CONFIRMED : RequestStatus.PENDING;
@@ -70,46 +66,9 @@ public class EventRequestServiceImpl implements EventRequestService {
 
         EventRequest savedRequest = eventRequestRepository.save(request);
 
-        return eventRequestMapper.toParticipationRequestDto(savedRequest);*/
-
-        log.info("Создание запроса на участие: userId = {}, eventId = {}", userId, eventId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь c ID " + userId + " не найден"));
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Событие c ID " + eventId + " не найдено"));
-
-        if (eventRequestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new DuplicatedException("Пользователь уже подал заявку на это событие.");
-        }
-
-        if (event.getInitiator().getId().equals(userId)) {
-            throw new DuplicatedException("Инициатор не может подавать заявку на своё событие.");
-        }
-
-        if (event.getState() != EventState.PUBLISHED) {
-            throw new DuplicatedException("Нельзя участвовать в неопубликованном событии.");
-        }
-
-        if (event.getParticipantLimit() != 0 &&
-                eventRequestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED) >= event.getParticipantLimit()) {
-            throw new DuplicatedException("Достигнут лимит участников.");
-        }
-
-        RequestStatus status = (!event.getRequestModeration() || event.getParticipantLimit() == 0)
-                ? RequestStatus.CONFIRMED : RequestStatus.PENDING;
-
-        EventRequest request = EventRequest.builder()
-                .event(event)
-                .requester(user)
-                .created(LocalDateTime.now())
-                .status(status)
-                .build();
-
-        EventRequest savedRequest = eventRequestRepository.save(request);
-        log.info("Создан запрос на участие с ID: {}", savedRequest.getId());
         return eventRequestMapper.toParticipationRequestDto(savedRequest);
+
+
     }
 
     @Transactional(readOnly = true)

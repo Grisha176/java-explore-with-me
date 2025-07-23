@@ -22,6 +22,7 @@ public class ErrorHandler {
         return new ErrorResponse("BAD_REQUEST", ex.getMessage());
     }
 
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException ex) {

@@ -19,7 +19,7 @@ public interface EventMapper {
         return dateTime != null ? dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : null;
     }
 
-    @Mapping(target = "category",ignore = true)
+    @Mapping(target = "category", ignore = true)
     @Mapping(source = "eventDate", target = "eventDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
     Event mapToEvent(NewEventDto newEventDto);
 
