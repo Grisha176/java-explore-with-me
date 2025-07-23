@@ -12,6 +12,10 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.dto.UpdateCategoryDto;
 import ru.practicum.category.model.Category;
+import ru.practicum.event.dao.EventRepository;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.service.EventService;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.DuplicatedException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.CategoryMapper;
@@ -25,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
 
     @Override
@@ -54,9 +59,9 @@ public class CategoryServiceImpl implements CategoryService {
         } else {
             return categoryMapper.mapToCategoryDto(category);
         }
-        if(categoryRepository.existsByName(updateCategoryDto.getName())) {
-            throw new DuplicatedException("Category with name " + updateCategoryDto.getName() + " already exists");
-        }
+            /*if(categoryRepository.existsByName(updateCategoryDto.getName())) {
+                throw new DuplicatedException("Category with name " + updateCategoryDto.getName() + " already exists");
+            }*/
         category = categoryRepository.save(category);
         log.info("Категория c id {} успешно обновлена", catId);
         return categoryMapper.mapToCategoryDto(category);
@@ -66,6 +71,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void deleteCategory(Integer catId) {
         Category category = categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Category with id "+catId+" not found"));
+        List<Event> events = eventRepository.findAllByCategoryId(category.getId());
+        if(!events.isEmpty()) {
+            throw new ConflictException("К категории привязаны события");
+        }
         categoryRepository.deleteById(catId);
     }
 

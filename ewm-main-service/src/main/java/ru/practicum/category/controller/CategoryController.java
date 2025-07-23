@@ -1,5 +1,6 @@
 package ru.practicum.category.controller;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,11 @@ public class CategoryController {
     @GetMapping("/categories")
     public List<CategoryDto> getAllCategories(@RequestHeader(value = "from",defaultValue = "0") int from,@RequestHeader(value = "size",defaultValue = "10") int size) {
         return categoryService.getAllCategories(from,size);
+
+    }
+    @GetMapping("/categories/{catId}")
+    public CategoryDto getCategoryById(@PathVariable Integer catId) {
+        return categoryService.getCategory(catId);
 
     }
 }

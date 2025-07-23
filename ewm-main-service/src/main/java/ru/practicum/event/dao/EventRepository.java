@@ -17,19 +17,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByIdAndInitiatorId(Long id, Long userId);
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
-            "AND (:states IS NULL OR e.state IN :states) " +
-            "AND (:categories IS NULL OR e.category.id IN :categories) " +
-            "AND (:start IS NULL OR :end IS NULL OR e.eventDate BETWEEN :start AND :end)")
-    List<Event> findAll1(@Param("users") List<Long> userIds,
-                        @Param("states") List<EventState> states,
-                        @Param("categories") List<Long> categories,
-                        @Param("start") LocalDateTime rangeStart,
-                        @Param("end") LocalDateTime rangeEnd,
-                        Pageable pageable);
+    List<Event> findAllByCategoryId(Long categoryId);
 
-    @Query("""
+
+   @Query("""
                 SELECT e
                 FROM Event AS e
                 WHERE (?1 IS NULL or e.initiator.id IN ?1)
@@ -46,6 +37,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime rangeEnd,
             Pageable pageable
     );
+
+
 
     @Query("SELECT e FROM Event e " +
             "WHERE (:text IS NULL OR " +

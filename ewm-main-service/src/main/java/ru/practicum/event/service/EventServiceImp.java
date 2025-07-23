@@ -163,18 +163,27 @@ public class EventServiceImp implements EventService {
     @Override
     public List<EventFullDto> getAllEventsAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size,HttpServletRequest request) {
 
-        Pageable pageable = PageRequest.of(from, size);
+      Pageable pageable = PageRequest.of(from, size);
 
 
-        List<EventState> eventStates = states.stream().map(EventState::valueOf).toList();
+        List<EventState> eventStates;
+        if(states != null){
+            eventStates = states.stream().map(EventState::valueOf).toList();
+        } else {
+            eventStates = List.of();
+        }
+
 
         List<Event> eventList;
         try {
-            eventList = eventRepository.findAll(users, eventStates, categories,rangeStart,rangeEnd, pageable);
+            //eventList = eventRepository.findAll(users, eventStates, categories,rangeStart,rangeEnd, pageable);
+            eventList = eventRepository.findAll(users, eventStates, categories, rangeStart, rangeEnd, pageable);
+            // Вот так бери контент
         } catch (Exception e) {
             log.error("Ошибка при выполнении запроса к БД: ", e);
             throw new RuntimeException("Ошибка при получении данных из базы данных", e);
         }
+
 
         List<Long> eventIds = eventList.stream().map(Event::getId).collect(Collectors.toList());
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsForEvents(eventIds);
@@ -188,6 +197,7 @@ public class EventServiceImp implements EventService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+
     }
 
     private Map<Long, Long> getConfirmedRequestsForEvents(List<Long> eventIds) {
@@ -283,29 +293,6 @@ public class EventServiceImp implements EventService {
         return result;
     }
 
-    private void confirmRequests(EventRequestStatusUpdateResult result, Event event, Collection<EventRequest> requests) {
-        int limit = event.getParticipantLimit();
-        int currentConfirmed = event.getConfirmedRequests();
-
-        for (EventRequest request : requests) {
-            if (request.getStatus() != RequestStatus.PENDING) {
-                throw new ConflictException("Можно подтвердить только заявки в статусе ожидания");
-            }
-            if (limit != 0 && currentConfirmed >= limit) {
-                request.setStatus(RequestStatus.REJECTED);
-                EventRequest updatedRequest = eventRequestRepository.save(request);
-                result.getRejectedRequests().add(eventRequestMapper.toParticipationRequestDto(updatedRequest));
-
-            } else {
-                request.setStatus(RequestStatus.CONFIRMED);
-                EventRequest updatedRequest = eventRequestRepository.save(request);
-                result.getConfirmedRequests().add(eventRequestMapper.toParticipationRequestDto(updatedRequest));
-                currentConfirmed++;
-            }
-        }
-        event.setViews(currentConfirmed);
-        eventRepository.save(event);
-    }
 
     private void rejectRequests(EventRequestStatusUpdateResult result,List<EventRequest> requests) {
         for (EventRequest eventRequest : requests) {
@@ -409,7 +396,6 @@ public class EventServiceImp implements EventService {
         return eventShortDtos;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest httpServletRequest) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие с id:"+eventId+" не найдено"));
@@ -421,8 +407,47 @@ public class EventServiceImp implements EventService {
 
         CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
         EventFullDto eventShortDto = eventMapper.mapToEventFullDto(event,categoryDto);
-        eventShortDto.setViews(getViews(event.getId(), event.getCreatedOn()));
+        eventShortDto.setViews(getViews(event.getId(), event.getCreatedOn(),httpServletRequest).intValue());
         return eventShortDto;
+    }
+
+    private Long getViews(Long eventId, LocalDateTime createdOn, HttpServletRequest request) {
+        LocalDateTime end = LocalDateTime.now();
+        String uri = request.getRequestURI();
+        Boolean unique = true;
+        Long defaultViews = 0L;
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            ResponseEntity<Object> statsResponse = statClient.getStats(createdOn, end, List.of(uri), unique);
+            log.info("Запрос к statClient: URI={}, from={}, to={}, unique={}", uri, createdOn, end, unique);
+            log.info("Ответ от statClient: status={}, body={}", statsResponse.getStatusCode(), statsResponse.getBody());
+            if (statsResponse.getStatusCode().is2xxSuccessful() && statsResponse.hasBody()) {
+                Object body = statsResponse.getBody();
+                if (body != null) {
+                    try {
+                        ViewStatsDto[] statsArray = mapper.convertValue(body, ViewStatsDto[].class);
+                        List<ViewStatsDto> stats = Arrays.asList(statsArray);
+
+                        if (!stats.isEmpty()) {
+                            return stats.getLast().getHits();
+                        } else {
+                            log.info("Нет данных статистики для события {}", eventId);
+                        }
+                    } catch (Exception e) {
+                        log.error("Ошибка преобразования данных статистики для события {}: {}", eventId, e.getMessage());
+                        return defaultViews;
+                    }
+                } else {
+                    log.warn("Тело ответа от statClient пустое для события {}", eventId);
+                }
+            } else {
+                log.warn("Неуспешный ответ от statClient для события {}: {}", eventId, statsResponse.getStatusCode());
+            }
+        } catch (Exception e) {
+            log.error("Ошибка при получении статистики для события {}: {}", eventId, e.getMessage());
+        }
+        return defaultViews;
     }
 
     private Integer getViews(Long eventId, LocalDateTime createdOn) {
