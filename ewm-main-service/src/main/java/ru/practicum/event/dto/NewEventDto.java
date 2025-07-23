@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public class NewEventDto {
     private String description;
 
     @NotNull(message = "Дата события не может быть пустой")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String eventDate;
 
 

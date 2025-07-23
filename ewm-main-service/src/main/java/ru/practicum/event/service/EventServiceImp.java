@@ -159,7 +159,7 @@ public class EventServiceImp implements EventService {
         return eventMapper.mapToEventFullDto(event,categoryDto);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public List<EventFullDto> getAllEventsAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size,HttpServletRequest request) {
 

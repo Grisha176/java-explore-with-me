@@ -38,7 +38,9 @@ public class EventFullDto {
     private Integer participantLimit = 0;
     private Boolean requestModeration;
     private EventState state;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String createdOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String publishedOn;
 
     @NotNull(message = "Создатель события не может быть null")
