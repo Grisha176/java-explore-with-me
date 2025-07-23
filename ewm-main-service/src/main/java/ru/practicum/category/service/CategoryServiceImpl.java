@@ -44,12 +44,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto updateCategory(Integer catId,UpdateCategoryDto updateCategoryDto) {
         log.info("Обновление категории с id: {}", catId);
+
         Category category = categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Category with id "+catId+" not found"));
         String newName = updateCategoryDto.getName().toLowerCase().trim();
         String oldName = category.getName().toLowerCase().trim();
         if(!oldName.equals(newName)) {
             log.info("Имя категории с id: {}, изменено с {},на {}", catId, oldName, newName);
-            category.setName(newName);
+            category.setName(updateCategoryDto.getName());
+        } else {
+            return categoryMapper.mapToCategoryDto(category);
+        }
+        if(categoryRepository.existsByName(updateCategoryDto.getName())) {
+            throw new DuplicatedException("Category with name " + updateCategoryDto.getName() + " already exists");
         }
         category = categoryRepository.save(category);
         log.info("Категория c id {} успешно обновлена", catId);

@@ -24,7 +24,7 @@ public class StatisticsClient extends BaseClient {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public StatisticsClient(@Value("${stat-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatisticsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
 
         super(
                 builder

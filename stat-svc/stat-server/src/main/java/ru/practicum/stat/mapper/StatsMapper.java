@@ -29,7 +29,7 @@ public interface StatsMapper {
 
         // Укажи явный формат даты + времени
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        return LocalDateTime.parse(date, formatter);
+        return LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     @Named("localDateTimeToString")

@@ -15,34 +15,53 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByIdAndInitiatorId(Long id, Long userId);
 
-    @Query("SELECT e FROM Event e WHERE e.initiator.id IN :users " +
-            "AND e.state IN :states " +
-            "AND e.category.id IN :categories " +
-            "AND e.eventDate BETWEEN :start AND :end")
-    List<Event> findAll(@Param("users") List<Long> userIds,
+    @Query("SELECT e FROM Event e " +
+            "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
+            "AND (:states IS NULL OR e.state IN :states) " +
+            "AND (:categories IS NULL OR e.category.id IN :categories) " +
+            "AND (:start IS NULL OR :end IS NULL OR e.eventDate BETWEEN :start AND :end)")
+    List<Event> findAll1(@Param("users") List<Long> userIds,
                         @Param("states") List<EventState> states,
                         @Param("categories") List<Long> categories,
                         @Param("start") LocalDateTime rangeStart,
                         @Param("end") LocalDateTime rangeEnd,
                         Pageable pageable);
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE (LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) " +
-            "       OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) " +
-            "  AND e.category.id IN :categories " +
-            "  AND e.paid = :paid " +
-            "  AND e.eventDate BETWEEN :start AND :end " +
-            "  AND (:onlyAvailable = false OR (e.participantLimit = 0 OR e.confirmedRequests < e.participantLimit))"+
-             "AND e.state = :state")
-    List<Event> findAllPublicRequest(@Param("text") String text,
-                        @Param("categories") List<Long> categories,
-                        @Param("paid") Boolean paid,
-                        @Param("start") LocalDateTime rangeStart,
-                        @Param("end") LocalDateTime rangeEnd,
-                        @Param("onlyAvailable") Boolean onlyAvailable,
-                        @Param("state") EventState state,
-                        Pageable pageable);
+    @Query("""
+                SELECT e
+                FROM Event AS e
+                WHERE (?1 IS NULL or e.initiator.id IN ?1)
+                    AND (?2 IS NULL or e.state IN ?2)
+                    AND (?3 IS NULL or e.category.id in ?3)
+                    AND (CAST(?4 AS timestamp) IS NULL or e.eventDate >= ?4)
+                    AND (CAST(?5 AS timestamp) IS NULL or e.eventDate < ?5)
+            """)
+    List<Event> findAll(
+            List<Long> users,
+            List<EventState> states,
+            List<Long> categories,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            Pageable pageable
+    );
 
+    @Query("SELECT e FROM Event e " +
+            "WHERE (:text IS NULL OR " +
+            "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) " +
+            "OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) " +
+            "AND (:categories IS NULL OR e.category.id IN :categories) " +
+            "AND (:paid IS NULL OR e.paid = :paid) " +
+            "AND (:start IS NULL OR :end IS NULL OR e.eventDate BETWEEN :start AND :end) " +
+            "AND (:onlyAvailable IS NULL OR :onlyAvailable = false OR (e.participantLimit = 0 OR e.confirmedRequests < e.participantLimit)) " +
+            "AND (:state IS NULL OR e.state = :state)")
+    List<Event> findAllPublicRequest(@Param("text") String text,
+                                     @Param("categories") List<Long> categories,
+                                     @Param("paid") Boolean paid,
+                                     @Param("start") LocalDateTime rangeStart,
+                                     @Param("end") LocalDateTime rangeEnd,
+                                     @Param("onlyAvailable") Boolean onlyAvailable,
+                                     @Param("state") EventState state,
+                                     Pageable pageable);
     List<Event> findAllByIdIn(List<Long> ids);
 
 }

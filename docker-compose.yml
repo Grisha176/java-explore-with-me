@@ -12,6 +12,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://statdb:5432/statdb
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=pas
+      - STATS_SERVER_URL=http://stats-server:9090
 
   statdb:
     image: postgres:16.1

@@ -54,10 +54,8 @@ public class ErrorHandler {
         return new ErrorResponse("CONFLICT", "Нарушение уникальности данных: " + ex.getMessage());
     }
 
-
-
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleIncorrectRequestException(final ConflictException e) {
         log.info("400 {}", e.getMessage(), e);
         return new ApiError(
@@ -65,6 +63,12 @@ public class ErrorHandler {
                 "Conflict made request.",
                 e.getMessage()
         );
+    }
+
+    @ExceptionHandler(ValidateDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerValidationException(ValidateDataException e) {
+        return new ErrorResponse("BAD_REQUEST", e.getMessage());
     }
 
     @ExceptionHandler

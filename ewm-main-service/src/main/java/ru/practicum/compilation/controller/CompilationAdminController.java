@@ -19,7 +19,8 @@ public class CompilationAdminController {
 
 
     @PostMapping("/admin/compilations")
-    public CompilationDto createCompilation(@RequestBody NewCompilationRequestDto newCompilationRequestDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompilationDto createCompilation(@RequestBody @Valid NewCompilationRequestDto newCompilationRequestDto) {
         log.info("Создание нового события {}", newCompilationRequestDto);
         return compilationService.create(newCompilationRequestDto);
     }

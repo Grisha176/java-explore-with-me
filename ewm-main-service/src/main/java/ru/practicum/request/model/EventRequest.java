@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.event.model.Event;
 import ru.practicum.request.enums.RequestStatus;
+import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -20,11 +22,13 @@ public class EventRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "event_id")
-    Long eventId;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    Event event;
 
-    @Column(name = "requester_id")
-    Long requesterId;
+    @ManyToOne
+    @JoinColumn(name = "requester_id", nullable = false)
+    User requester;
 
     @Enumerated(EnumType.STRING)
     RequestStatus status;

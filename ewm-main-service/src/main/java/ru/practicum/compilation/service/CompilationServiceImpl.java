@@ -37,6 +37,9 @@ public class CompilationServiceImpl implements CompilationService {
 
         List<Event> events = eventRepository.findAllByIdIn(newCompilationRequestDto.getEvents());
         Compilation compilation = compilationMapper.mapToCompilation(newCompilationRequestDto);
+        if(newCompilationRequestDto.getPinned() == null){
+            compilation.setPinned(false);
+        }
         compilation.setEvents(events);
         compilation = compilationRepository.save(compilation);
         log.info("Успешное сохранение подборки {}",compilation);
