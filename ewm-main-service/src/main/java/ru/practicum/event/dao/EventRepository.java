@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByCategoryId(Long categoryId);
 
 
-   @Query("""
+    @Query("""
                 SELECT e
                 FROM Event AS e
                 WHERE (?1 IS NULL or e.initiator.id IN ?1)
@@ -37,7 +37,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime rangeEnd,
             Pageable pageable
     );
-
 
 
     @Query("SELECT e FROM Event e " +
@@ -59,6 +58,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                      Pageable pageable);
 
     Page<Event> findAll(Specification<Event> spec, Pageable pageable);
+
     List<Event> findAllByIdIn(List<Long> ids);
 
 }

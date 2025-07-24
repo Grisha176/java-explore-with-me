@@ -3,7 +3,6 @@ package ru.practicum.request.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

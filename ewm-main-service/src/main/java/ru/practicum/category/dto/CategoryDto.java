@@ -1,6 +1,5 @@
 package ru.practicum.category.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
