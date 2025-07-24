@@ -17,10 +17,10 @@ public interface StatsMapper {
     ViewStatsDto mapToViewStatsDto(ViewStats viewStats);
 
 
-    @Mapping(target = "timestamp", source = "timestamp", qualifiedByName = "stringToLocalDateTime")
+    @Mapping(target = "timestamp", source = "timestamp")
     EndpointHit mapToEndpointHit(EndpointHitDto endpointHitDto);
 
-    @Mapping(target = "timestamp", source = "timestamp", qualifiedByName = "localDateTimeToString")
+    @Mapping(target = "timestamp", source = "timestamp")
     EndpointHitDto mapToEndpointHitDto(EndpointHit endpointHit);
 
     @Named("stringToLocalDateTime")

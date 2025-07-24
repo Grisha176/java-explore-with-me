@@ -11,6 +11,5 @@ import lombok.*;
 public class CategoryDto {
 
     private Long id;
-    @NotNull(message = "Имя не может быть пустым")
     private String name;
 }

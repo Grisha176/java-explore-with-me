@@ -73,7 +73,7 @@ public class EventServiceImp implements EventService {
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         log.info("Попытка создать событие пользователем {},{}", userId, newEventDto);
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id:" + userId + " не найден"));
-        Category category = categoryRepository.findById(newEventDto.getCategory().intValue())
+        Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Категория с ID " + newEventDto.getCategory() + " не найдена"));
         Event event = eventMapper.mapToEvent(newEventDto);
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -92,15 +92,18 @@ public class EventServiceImp implements EventService {
         if (newEventDto.getRequestModeration() == null) {
             event.setRequestModeration(true);
         }
+        if (newEventDto.getParticipantLimit() == null) {
+            event.setParticipantLimit(0);
+        }
 
         event = eventRepository.save(event);
-        log.info("Успешное создание события {}", event.toString());
+        log.info("Успешное создание события {}", event.getParticipantLimit());
         CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
         return eventMapper.mapToEventFullDto(event, categoryDto);
     }
 
     @Override
-    public List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size) {
+    public List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size, HttpServletRequest request) {
         log.info("Получение всех событий пользователя с id {}", userId);
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id:" + userId + " не найден"));
         Pageable pageable = PageRequest.of(from, size);
@@ -109,7 +112,7 @@ public class EventServiceImp implements EventService {
                 .map(event -> {
                     CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
                     UserShortDto userShortDto = userMapper.toUserShortDto(event.getInitiator());
-                    long views = getViews(event.getId(), event.getCreatedOn());
+                    long views = getViews(event.getId(), event.getCreatedOn(), request);
 
                     EventShortDto eventShortDto = eventMapper.toEventShortDto(event);
                     eventShortDto.setCategory(categoryDto);
@@ -141,7 +144,7 @@ public class EventServiceImp implements EventService {
 
     @Transactional
     @Override
-    public EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
+    public EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest, HttpServletRequest request) {
         log.info("Попытка обновить событие: {},{}", eventId, updateEventUserRequest);
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с id:" + userId + " не найден"));
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotFoundException("Событие с id:" + eventId + " не найдено"));
@@ -150,7 +153,7 @@ public class EventServiceImp implements EventService {
         }
         event = updateEventFromDto(updateEventUserRequest, event);
         event = eventRepository.save(event);
-        event.setViews(getViews(event.getId(), event.getCreatedOn()));
+        event.setViews(getViews(event.getId(), event.getCreatedOn(), request).intValue());
         log.info("Успешное обновление события");
         CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
         return eventMapper.mapToEventFullDto(event, categoryDto);
@@ -190,7 +193,7 @@ public class EventServiceImp implements EventService {
                 .map(event -> {
                     CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
                     EventFullDto dto = eventMapper.mapToEventFullDto(event, categoryDto);
-                    dto.setViews(getViews(event.getId(), event.getCreatedOn()));
+                    dto.setViews(getViews(event.getId(), event.getCreatedOn(), request).intValue());
                     dto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(event.getId(), 0L).intValue());
                     return dto;
                 })
@@ -306,8 +309,10 @@ public class EventServiceImp implements EventService {
 
     @Transactional
     @Override
-    public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
+    public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest, HttpServletRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие с id:" + eventId + " не найдено"));
+        log.info("s" + updateEventAdminRequest.getRequestModeration());
+        log.info("pra" + event.getParticipantLimit());
         if (event.getState().equals(EventState.PUBLISHED)) {
             throw new ConflictException("Опубликованные события нельзя изменить");
         }
@@ -315,10 +320,13 @@ public class EventServiceImp implements EventService {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidateDataException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
         }
+        log.info("s" + event.getRequestModeration());
         validateUpdateAdmin(event.getState(), updateEventAdminRequest.getStateAction());
         event = updateEventFromAdminDto(updateEventAdminRequest, event);
+        log.info("pra" + event.getParticipantLimit());
         event = eventRepository.save(event);
-        event.setViews(getViews(event.getId(), event.getCreatedOn()));
+        log.info("s" + event.getRequestModeration());
+        event.setViews(getViews(event.getId(), event.getCreatedOn(), request).intValue());
         CategoryDto categoryDto = categoryMapper.mapToCategoryDto(event.getCategory());
         return eventMapper.mapToEventFullDto(event, categoryDto);
 
@@ -379,7 +387,7 @@ public class EventServiceImp implements EventService {
         List<EventShortDto> eventShortDtos = eventPage.getContent().stream()
                 .map(event -> {
                     EventShortDto eventDto = eventMapper.toEventShortDto(event);
-                    eventDto.setViews(getViews(event.getId(), event.getCreatedOn()));
+                    eventDto.setViews(getViews(event.getId(), event.getCreatedOn(), httpServletRequest).intValue());
                     eventDto.setConfirmedRequests(eventDto.getConfirmedRequests());
                     return eventDto;
                 })
@@ -408,7 +416,6 @@ public class EventServiceImp implements EventService {
         eventShortDto.setViews(getViews(event.getId(), event.getCreatedOn(), httpServletRequest).intValue());
         return eventShortDto;
 
-
     }
 
     private Long getViews(Long eventId, LocalDateTime createdOn, HttpServletRequest request) {
@@ -420,7 +427,7 @@ public class EventServiceImp implements EventService {
 
         try {
             ResponseEntity<Object> statsResponse = statClient.getStats(createdOn, end, List.of(uri), unique);
-            log.info("Запрос к statClient: URI={}, from={}, to={}, unique={}", uri, createdOn, end, unique);
+            log.info("Запрос к statClient: URI={}, from={}, to={}, unique={},createdOn={}", uri, createdOn, end, unique, createdOn);
             log.info("Ответ от statClient: status={}, body={}", statsResponse.getStatusCode(), statsResponse.getBody());
             if (statsResponse.getStatusCode().is2xxSuccessful() && statsResponse.hasBody()) {
                 Object body = statsResponse.getBody();
@@ -450,48 +457,6 @@ public class EventServiceImp implements EventService {
         return defaultViews;
     }
 
-    private Integer getViews(Long eventId, LocalDateTime createdOn) {
-        LocalDateTime start = createdOn;
-        LocalDateTime end = LocalDateTime.now();
-        List<String> uris = List.of("/events/" + eventId);
-        Boolean unique = true;
-
-        ResponseEntity<Object> statsResponse = statClient.getStats(start, end, uris, unique);
-
-        if (statsResponse.getStatusCode().is2xxSuccessful() && statsResponse.getBody() != null) {
-            List<Map<String, Object>> stats = (List<Map<String, Object>>) statsResponse.getBody();
-            if (!stats.isEmpty()) {
-                Map<String, Object> stat = stats.getFirst();
-                Long hits = (Long) stat.get("hits");
-                return Math.toIntExact(hits);
-            }
-        } else {
-            log.warn("Ошибка получение статисктики.Код:" + statsResponse.getStatusCode());
-        }
-        return 0;
-    }
-
-    private Map<Long, Long> getViewsAllEvents(List<Event> events) {
-        LocalDateTime start = LocalDateTime.now().minusYears(1);
-        LocalDateTime end = LocalDateTime.now().plusYears(1);
-        List<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId())
-                .collect(Collectors.toList());
-        ResponseEntity<Object> response = statClient.getStats(start, end, uris, true);
-
-
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            List<ViewStatsDto> viewStatsList = Arrays.asList(new ObjectMapper().convertValue(response.getBody(), ViewStatsDto[].class));
-            return viewStatsList.stream()
-                    .collect(Collectors.toMap(
-                            viewStats -> Long.parseLong(viewStats.getUri().substring("/events/".length())),
-                            ViewStatsDto::getHits
-                    ));
-        } else {
-            log.warn("Не удалось получить статистику просмотров. Код ответа: {}", response.getStatusCodeValue());
-            return Collections.emptyMap();
-        }
-    }
 
     private Event updateEventFromDto(UpdateEventUserRequest dto, Event event) {
         if (dto.getAnnotation() != null) event.setAnnotation(dto.getAnnotation());
@@ -509,7 +474,7 @@ public class EventServiceImp implements EventService {
         if (dto.getTitle() != null) event.setTitle(dto.getTitle());
 
         if (dto.getCategory() != null) {
-            Category category = categoryRepository.findById(Integer.parseInt(dto.getCategory().toString()))
+            Category category = categoryRepository.findById(dto.getCategory())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             event.setCategory(category);
         }

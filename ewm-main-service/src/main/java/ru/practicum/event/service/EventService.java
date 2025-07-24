@@ -14,7 +14,7 @@ public interface EventService {
 
     EventFullDto createEvent(Long userId, NewEventDto newEventDto);
 
-    List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size);
+    List<EventShortDto> getAllEventsPrivate(Long userId, int from, int size, HttpServletRequest request);
 
     List<EventFullDto> getAllEventsAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size, HttpServletRequest request);
 
@@ -24,9 +24,9 @@ public interface EventService {
 
     EventFullDto getEventById(Long eventId, Long userId);
 
-    EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
+    EventFullDto updateEventUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest, HttpServletRequest request);
 
-    EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
+    EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest, HttpServletRequest request);
 
     List<ParticipationRequestDto> getByEventId(Long eventInitiatorId, Long eventId);
 

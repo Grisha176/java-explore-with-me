@@ -36,39 +36,45 @@ public class EventRequestServiceImpl implements EventRequestService {
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
 
+
+        log.info("Создание запроса на участие: userId = {}, eventId = {}", userId, eventId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь c ID " + userId + " не найден"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Событие с id " + eventId + " не найдено"));
 
-        validateNewRequest(event, userId, eventId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Событие c ID " + eventId + " не найдено"));
+
+        if (eventRequestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
+            throw new DuplicatedException("Пользователь уже подал заявку на это событие.");
+        }
+
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new DuplicatedException("Инициатор не может подавать заявку на своё событие.");
+        }
 
         if (event.getState() != EventState.PUBLISHED) {
-            throw new DuplicatedException("Нельзя участвовать в неопубликованном событии");
+            throw new DuplicatedException("Нельзя участвовать в неопубликованном событии.");
         }
 
         if (event.getParticipantLimit() != 0 &&
-                eventRequestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED) >= event.getParticipantLimit() && event.getRequestModeration()) {
+                eventRequestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED) >= event.getParticipantLimit()) {
             throw new DuplicatedException("Достигнут лимит участников.");
         }
-        System.out.println(eventRequestRepository.countByEventId(eventId));
-        ;
 
         RequestStatus status = (!event.getRequestModeration() || event.getParticipantLimit() == 0)
                 ? RequestStatus.CONFIRMED : RequestStatus.PENDING;
 
-        EventRequest request = new EventRequest();
-        request.setCreated(LocalDateTime.now());
-        request.setRequester(user);
-        request.setEvent(event);
-        request.setStatus(status);
-
+        EventRequest request = EventRequest.builder()
+                .event(event)
+                .requester(user)
+                .created(LocalDateTime.now())
+                .status(status)
+                .build();
 
         EventRequest savedRequest = eventRequestRepository.save(request);
-
+        log.info("Создан запрос на участие с ID: {}", savedRequest.getId());
         return eventRequestMapper.toParticipationRequestDto(savedRequest);
-
-
     }
 
     @Transactional(readOnly = true)
@@ -83,6 +89,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+        log.info("Подтверждение заявки с id:{},userid={}", requestId, userId);
         EventRequest request = eventRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос с id:" + requestId + " не найден"));
 
@@ -96,6 +103,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
         request.setStatus(RequestStatus.CANCELED);
         EventRequest savedRequest = eventRequestRepository.save(request);
+        log.info("e" + savedRequest);
         return eventRequestMapper.toParticipationRequestDto(savedRequest);
     }
 

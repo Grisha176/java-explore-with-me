@@ -40,9 +40,9 @@ public class EventAdminController {
     }
 
     @PatchMapping("/admin/events/{eventId}")
-    public EventFullDto update(@PathVariable Long eventId, @RequestBody @Valid UpdateEventAdminRequest eventDto) {
+    public EventFullDto update(@PathVariable Long eventId, @RequestBody @Valid UpdateEventAdminRequest eventDto, HttpServletRequest request) {
         log.info("Пришел PATCH запрос /admin/events/{} с телом {}", eventId, eventDto.toString());
-        final EventFullDto event = eventService.updateEventAdmin(eventId, eventDto);
+        final EventFullDto event = eventService.updateEventAdmin(eventId, eventDto, request);
         log.info("Отправлен ответ PATCH /admin/events/{} с телом: {}", eventId, event.toString());
         return event;
     }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.client.base.BaseClient;
-import ru.practicum.dto.EndpointHitCreateDto;
 import ru.practicum.dto.EndpointHitDto;
 
 import java.time.LocalDateTime;
@@ -28,27 +27,6 @@ public class StatisticsClient extends BaseClient {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /*@Autowired
-    public StatisticsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
-
-        super(
-                builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
-                        .build()
-        );
-    }
-
-    // Отправляем запрос на сохранение информации о хите
-    public ResponseEntity<Object> create(HttpServletRequest request) {
-        EndpointHitDto endpointHitCreateDto = EndpointHitDto.builder()
-                .app(request.getHeader("app")) // Получаем app из заголовка запроса
-                .uri(request.getRequestURI()) // Получаем URI из запроса
-                .ip(request.getRemoteAddr()) // Получаем IP-адрес из запроса
-                .timestamp(LocalDateTime.now().toString()) // Устанавливаем текущее время
-                .build();
-        return post("/hit", endpointHitCreateDto);
-    }*/
 
     private String appName;
 
@@ -68,31 +46,21 @@ public class StatisticsClient extends BaseClient {
 
     public ResponseEntity<Object> create(HttpServletRequest request) {
 
-        EndpointHitCreateDto endpointHitCreateDto = EndpointHitCreateDto.builder()
+        EndpointHitDto endpointHitCreateDto = EndpointHitDto.builder()
                 .app(appName)
                 .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
                 .build();
         return post(endpointHitCreateDto);
     }
 
-    // Получаем статистику
-/*    public ResponseEntity<Object> getStats(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end, List<String> uris, Boolean unique) {
-        log.info("Получение статистики statc");
-        Map<String, Object> parameters = Map.of(
-                "start", start.format(formatter),
-                "end", end.format(formatter),
-                "uris", String.join(",", uris),
-                "unique", unique
-        );
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-    }*/
 
-    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    public ResponseEntity<Object> getStats(@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSS") LocalDateTime start, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSS") LocalDateTime end, List<String> uris, Boolean unique) {
         log.info("StatClient получение статистики");
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/stats")
-                .queryParam("start", start.format(formatter))
-                .queryParam("end", end.format(formatter))
+                .queryParam("start", start)
+                .queryParam("end", end)
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {

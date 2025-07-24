@@ -23,7 +23,9 @@ public class RequestController {
                                           @RequestParam(name = "eventId") @Min(0) Long eventId) {
         log.info("POST запрос на создание запроса на участие в событии с id= {}  пользователя с id= {}",
                 eventId, userId);
-        return eventRequestService.create(userId, eventId);
+        ParticipationRequestDto createdRequest = eventRequestService.create(userId, eventId);
+        log.info("Создан запрос на участие: {}", createdRequest);
+        return createdRequest;
     }
 
     @GetMapping("/users/{userId}/requests")

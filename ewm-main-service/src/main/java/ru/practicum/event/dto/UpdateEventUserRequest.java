@@ -33,13 +33,13 @@ public class UpdateEventUserRequest {
 
     private Boolean paid;
 
-    @Min(value = 0,message = "Количество участников не может быть отрицательным числом")
+    @Min(value = 0, message = "Количество участников не может быть отрицательным числом")
     private Integer participantLimit;
 
     private Boolean requestModeration;
 
     private EventStateActionUserRequest stateAction;
 
-    @Size(min = 3,max = 120,message = "Размер заголовка может быть от 3 до 120 сиволов")
+    @Size(min = 3, max = 120, message = "Размер заголовка может быть от 3 до 120 сиволов")
     private String title;
 }

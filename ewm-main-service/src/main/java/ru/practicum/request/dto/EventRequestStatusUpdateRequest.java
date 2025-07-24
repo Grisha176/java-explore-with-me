@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.request.enums.RequestStatus;
 
 
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -16,7 +16,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class EventRequestStatusUpdateRequest {
     @NotEmpty(message = "Have not requests to update")
-    Collection<Long> requestIds;
+    List<Long> requestIds;
 
     @NotBlank(message = "Have not new status for requests to update")
     RequestStatus status;

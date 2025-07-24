@@ -2,6 +2,8 @@ package ru.practicum.category.controller;
 
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,27 +30,27 @@ public class CategoryController {
     }
 
     @PatchMapping("/admin/categories/{catId}")
-    public CategoryDto updateCategory(@PathVariable Integer catId, @RequestBody @Valid UpdateCategoryDto updateCategoryDto) {
+    public CategoryDto updateCategory(@PathVariable Long catId, @RequestBody @Valid UpdateCategoryDto updateCategoryDto) {
         log.info("Запрос на обновление категории с id {}", catId);
         return categoryService.updateCategory(catId, updateCategoryDto);
     }
 
     @DeleteMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable Integer catId) {
+    public void deleteCategory(@PathVariable Long catId) {
         log.info("Запрос на удаление категории с id {}", catId);
         categoryService.deleteCategory(catId);
     }
 
     @GetMapping("/categories")
-    public List<CategoryDto> getAllCategories(@RequestHeader(value = "from", defaultValue = "0") int from, @RequestHeader(value = "size", defaultValue = "10") int size) {
+    public List<CategoryDto> getAllCategories(@RequestParam(defaultValue = "0") @PositiveOrZero int from, @RequestParam(defaultValue = "10") @Positive int size) {
         return categoryService.getAllCategories(from, size);
 
     }
 
     @GetMapping("/categories/{catId}")
-    public CategoryDto getCategoryById(@PathVariable Integer catId) {
-        return categoryService.getCategory(catId);
+    public CategoryDto getCategoryById(@PathVariable Long catId) {
+        return categoryService.getCategoryById(catId);
 
     }
 }

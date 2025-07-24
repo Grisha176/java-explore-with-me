@@ -5,6 +5,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
+
 import java.util.List;
 
 @Slf4j
@@ -13,7 +14,7 @@ public class BaseClient {
     protected final RestTemplate rest;
     private final String statsUri;
 
-    public BaseClient(RestTemplate rest,@Value("${stats-server.url}") String statsUri) {
+    public BaseClient(RestTemplate rest, @Value("${stats-server.url}") String statsUri) {
         this.rest = rest;
         this.statsUri = statsUri;
     }

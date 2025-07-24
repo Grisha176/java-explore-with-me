@@ -37,7 +37,7 @@ public class EventFullDto {
     @NotNull(message = "статус не может быть пустым")
     private Boolean paid;
 
-    private Integer participantLimit = 0;
+    private Integer participantLimit;
     private Boolean requestModeration;
     private EventState state;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

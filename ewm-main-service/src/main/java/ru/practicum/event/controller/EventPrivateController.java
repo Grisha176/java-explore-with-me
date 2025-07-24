@@ -1,6 +1,7 @@
 package ru.practicum.event.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -32,15 +33,14 @@ public class EventPrivateController {
     @PostMapping("/users/{userId}/events")
     public EventFullDto create(@PathVariable Long userId, @RequestBody @Valid NewEventDto eventDto) {
         log.info("Запрос на создание события userId:{},{}", userId, eventDto);
-        final EventFullDto event = eventService.createEvent(userId, eventDto);
-        return event;
+        return eventService.createEvent(userId, eventDto);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
-    public EventFullDto update(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody @Valid UpdateEventUserRequest eventDto) {
+    public EventFullDto update(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody @Valid UpdateEventUserRequest eventDto, HttpServletRequest request) {
         System.out.println(eventDto.toString());
         log.info("Запрос на обновление события с id:{},пользователем с id:{},{}", userId, eventId, eventDto.toString());
-        return eventService.updateEventUser(userId, eventId, eventDto);
+        return eventService.updateEventUser(userId, eventId, eventDto, request);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
@@ -54,24 +54,23 @@ public class EventPrivateController {
     public Collection<EventShortDto> findAllByPrivate(
             @PathVariable Long userId,
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(required = false, defaultValue = "10") @Positive Integer size
+            @RequestParam(required = false, defaultValue = "10") @Positive Integer size,
+            HttpServletRequest request
     ) {
         log.info("Приватный запрос на получение событий userId:{},from:{},size:{} ", userId, from, size);
-        final Collection<EventShortDto> events = eventService.getAllEventsPrivate(userId, from, size);
-        return events;
+        return eventService.getAllEventsPrivate(userId, from, size, request);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
     public Collection<ParticipationRequestDto> getByEventId(@PathVariable Long userId, @PathVariable Long eventId) {
         log.info("Приватный запрос на получение события,userId:{},eventId:{}", userId, eventId);
-        final Collection<ParticipationRequestDto> requests = eventService.getByEventId(userId, eventId);
-        return requests;
+        return eventService.getByEventId(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateStatus(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody EventRequestStatusUpdateRequest requestsToUpdate) {
         log.info("Заапрос на обновление userId:{},eventId:{},{}", userId, eventId, requestsToUpdate);
-        final EventRequestStatusUpdateResult result = eventService.updateStatus(userId, eventId, requestsToUpdate);
-        return result;
+        return eventService.updateStatus(userId, eventId, requestsToUpdate);
+
     }
 }

@@ -34,11 +34,11 @@ public class UpdateEventAdminRequest {
 
     private Integer participantLimit;
 
-    private Boolean requestModeration = true;
+    private Boolean requestModeration;
 
     private EventStateAction stateAction;
 
-    @Size(min = 3,max = 120,message = "Размер заголовка может быть от 3 до 120 сиволов")
+    @Size(min = 3, max = 120, message = "Размер заголовка может быть от 3 до 120 сиволов")
     private String title;
 
 }
