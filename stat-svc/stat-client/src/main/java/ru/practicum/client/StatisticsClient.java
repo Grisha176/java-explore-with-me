@@ -58,8 +58,8 @@ public class StatisticsClient extends BaseClient {
     public ResponseEntity<Object> getStats(@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSS") LocalDateTime start, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSS") LocalDateTime end, List<String> uris, Boolean unique) {
         log.info("StatClient получение статистики");
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
+                .queryParam("start", start.format(formatter))
+                .queryParam("end", end.format(formatter))
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {

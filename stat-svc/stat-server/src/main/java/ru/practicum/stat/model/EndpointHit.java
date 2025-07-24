@@ -30,7 +30,7 @@ public class EndpointHit {
     private String ip;
 
     @Column(name = "created")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 
 }
