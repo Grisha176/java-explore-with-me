@@ -20,4 +20,6 @@ public class NewUserRequest {
     @Size(min = 6, max = 254, message = "Длина email должна составлять от 6 до 254 символов!")
     @Email(message = "Email должен быть в подходящем формате!")
     private String email;
+
+
 }

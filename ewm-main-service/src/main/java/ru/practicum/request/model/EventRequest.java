@@ -1,17 +1,15 @@
 package ru.practicum.request.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
