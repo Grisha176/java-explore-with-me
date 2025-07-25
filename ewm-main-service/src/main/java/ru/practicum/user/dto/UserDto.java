@@ -17,4 +17,5 @@ public class UserDto {
     @NotNull(message = "id не может быть пустым")
     @Email
     private String email;
+    boolean allowSubscriptions;
 }

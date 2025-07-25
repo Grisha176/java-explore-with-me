@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.mapToUser(newUserRequest);
         user = userRepository.save(user);
+        log.info("userA"+user.isAllowSubscriptions());
         log.info("Успешное создание пользователя: {}", user);
+        user.setAllowSubscriptions(true);
         return userMapper.mapToUserDto(user);
     }
 
