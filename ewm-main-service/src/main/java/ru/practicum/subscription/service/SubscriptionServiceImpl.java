@@ -56,6 +56,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
 
+    @Transactional
     @Override
     public void unsubscribe(Long userId, Long ownerId) {
         User follower = findUser(userId);
