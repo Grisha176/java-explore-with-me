@@ -12,18 +12,14 @@
 
 	<name>Explore With Me</name>
 	<modules>
-		<module>stat-svc</module>
-		<module>stat-svc/stat-client</module>
-        <module>stat-svc/stat-dto</module>
-		<module>stat-svc/stat-server</module>
 		<module>ewm-main-service</module>
+		<module>stat-svc</module>
 	</modules>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
 
 	<properties>
 		<java.version>21</java.version>
