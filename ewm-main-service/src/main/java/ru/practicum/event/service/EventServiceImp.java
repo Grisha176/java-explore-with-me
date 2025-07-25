@@ -124,7 +124,6 @@ public class EventServiceImp implements EventService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public EventFullDto getEventById(Long eventId, Long userId) {
         log.info("Получение события {}, пользователя с id {}", eventId, userId);

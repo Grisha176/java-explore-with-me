@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 public class NewEventDto {
 
     @NotBlank(message = "аннотация не может быть пустой")
-    @NotNull(message = "описание не может быть пустым")
     @Size(min = 20, max = 2000, message = "Длина аннотации должна не больше 2000 символов и не меньше 20")
     private String annotation;
 
@@ -26,7 +25,6 @@ public class NewEventDto {
     private Long category;
 
     @NotBlank(message = "Описание не может быть пустым")
-    @NotNull(message = "описание не может быть пустым")
     @Size(min = 20, max = 7000, message = "Длина описания должна не больше 7000 символов и не меньше 20")
     private String description;
 

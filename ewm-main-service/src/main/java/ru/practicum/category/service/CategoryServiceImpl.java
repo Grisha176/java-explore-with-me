@@ -69,14 +69,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(catId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public CategoryDto getCategoryById(Long catId) {
         return categoryMapper.mapToCategoryDto(categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Category with id " + catId + " not found")));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategories(int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         return categoryRepository.findAll(pageable).stream().map(categoryMapper::mapToCategoryDto).toList();

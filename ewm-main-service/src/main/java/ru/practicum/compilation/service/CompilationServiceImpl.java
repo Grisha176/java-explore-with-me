@@ -72,7 +72,6 @@ public class CompilationServiceImpl implements CompilationService {
         return compilationMapper.mapToCompilationDto(compilation, eventShortDtos);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<CompilationDto> getAllCompilationPublic(Boolean pinned, int from, int size) {
         log.info("Получение всех подборок с from={}, size={}, pinned={}", from, size, pinned);
@@ -84,7 +83,6 @@ public class CompilationServiceImpl implements CompilationService {
         }).toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public CompilationDto getById(Long compId) {
         log.info("Получение подборки с id:{}", compId);

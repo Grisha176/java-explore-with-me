@@ -7,6 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
@@ -26,6 +27,7 @@ public class EventPublicController {
     private final EventService eventService;
 
     @GetMapping
+    @Validated
     public Collection<EventShortDto> findAllByPublic(@RequestParam(required = false) String text,
                                                      @RequestParam(required = false) List<Long> categories,
                                                      @RequestParam(required = false) Boolean paid,
@@ -33,8 +35,8 @@ public class EventPublicController {
                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                      @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
                                                      @RequestParam(required = false) String sort,
-                                                     @RequestParam(required = false, defaultValue = "0") @PositiveOrZero Integer from,
-                                                     @RequestParam(required = false, defaultValue = "10") @Positive Integer size,
+                                                     @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                     @RequestParam(defaultValue = "10") @Positive Integer size,
                                                      HttpServletRequest request) {
         log.info("Публичный запрос на получении событий {}, categories={}, paid={}, rangeStart={}, rangeEnd={}, onlyAvailable={}, sort={}, from={}, size={}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);

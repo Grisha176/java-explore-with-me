@@ -33,6 +33,7 @@ public class EventRequestServiceImpl implements EventRequestService {
     private final EventRequestRepository eventRequestRepository;
     private final EventRequestMapper eventRequestMapper;
 
+    @Transactional
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
 
@@ -77,7 +78,7 @@ public class EventRequestServiceImpl implements EventRequestService {
         return eventRequestMapper.toParticipationRequestDto(savedRequest);
     }
 
-    @Transactional(readOnly = true)
+
     @Override
     public List<ParticipationRequestDto> getRequestsByUserId(Long userId) {
         userRepository.findById(userId)
